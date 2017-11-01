@@ -60,7 +60,8 @@ class TestIndexMappings(unittest.TestCase):
 
         bok_mappings = {
             'tags': {
-                'type': "nested"
+                'type': 'text',
+                'index': 'not_analyzed'
             },
             'year': {
                 'type': 'long'
@@ -69,13 +70,19 @@ class TestIndexMappings(unittest.TestCase):
                 'type': 'keyword'
             },
             'authors': {
-                'type': 'nested'
+                'type': 'text',
+                'index': 'not_analyzed'
             }
         }
         bok = common.copy()
         bok.update(bok_mappings)
         if not self.es.indices.exists(index=self.indexes):
             self.es.indices.create(index=self.indexes, body={"mappings": {'weipan': {'properties': bok}}})
+
+    def testMappings(self):
+        self.es.index("resources", "weipan", {
+            "authors": ["hello", "elastic", "search"]
+        })
 
     def testCreating(self):
         self.es.indices.create(index="other_indexes", body={
